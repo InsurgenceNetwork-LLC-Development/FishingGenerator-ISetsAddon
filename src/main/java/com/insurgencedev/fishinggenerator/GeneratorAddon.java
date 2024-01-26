@@ -6,7 +6,7 @@ import org.insurgencedev.insurgencesets.api.addon.ISetsAddon;
 import org.insurgencedev.insurgencesets.api.addon.InsurgenceSetsAddon;
 
 @ISetsAddon(
-        name = "FishingGenerator", version = "1.0.0", author = "Hxtch", description = "Earn fragments from catching fishes"
+        name = "FishingGenerator", version = "1.0.1", author = "Hxtch", description = "Earn fragments from catching fishes"
 )
 public class GeneratorAddon extends InsurgenceSetsAddon {
 
@@ -22,13 +22,5 @@ public class GeneratorAddon extends InsurgenceSetsAddon {
     public void onAddonReloadablesStart() {
         registerEvent(new PlayerFishingListener());
         ISetsAPI.getFragmentGeneratorManager().registerFragmentGenerator(new FishingGenerator());
-    }
-
-    @Override
-    public void onAddonReload() {
-    }
-
-    @Override
-    public void onAddonStop() {
     }
 }

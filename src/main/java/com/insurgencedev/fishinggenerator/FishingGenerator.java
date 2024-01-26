@@ -4,11 +4,11 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.insurgencedev.insurgencesets.api.FragmentGenerator;
 import org.insurgencedev.insurgencesets.api.ISetsAPI;
+import org.insurgencedev.insurgencesets.api.contracts.IArmorSet;
+import org.insurgencedev.insurgencesets.api.contracts.IFragment;
+import org.insurgencedev.insurgencesets.api.contracts.IPlayer;
 import org.insurgencedev.insurgencesets.libs.fo.Common;
 import org.insurgencedev.insurgencesets.libs.fo.collection.SerializedMap;
-import org.insurgencedev.insurgencesets.models.armorset.ArmorSet;
-import org.insurgencedev.insurgencesets.models.fragment.Fragment;
-import org.insurgencedev.insurgencesets.settings.ISetsPlayerCache;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -29,20 +29,20 @@ public final class FishingGenerator extends FragmentGenerator {
             double random = Math.random();
 
             if (random <= chance / 100) {
-                ISetsPlayerCache cache = ISetsAPI.getCache(player);
-                String selectedGen = cache.getArmorSetFragmentGen();
-                ArmorSet armorSet = ISetsAPI.getArmorSetManager().findArmorSet(selectedGen);
+                IPlayer cache = ISetsAPI.getCache(player);
+                String selectedGen = cache.getFragmentDataManager().getArmorSetFragmentGen();
+                IArmorSet armorSet = ISetsAPI.getArmorSetManager().getArmorSet(selectedGen);
 
                 if (armorSet != null) {
-                    Fragment fragment = armorSet.getFragment();
+                    IFragment fragment = armorSet.getFragment();
                     boolean isPhysical = map.getBoolean("Physical");
                     String message = map.getString("Give_Message");
-                    int amount = getAmount(map);
+                    int amount = getAmount(player, map);
 
                     if (isPhysical) {
                         fragment.giveOrUpdateFragment(player, amount, false);
                     } else {
-                        cache.updateFragmentAmount(selectedGen, amount);
+                        cache.getFragmentDataManager().updateFragmentAmount(selectedGen, amount);
                     }
 
                     Common.tellNoPrefix(player, message.replace("{amount}", "" + amount));
@@ -51,10 +51,10 @@ public final class FishingGenerator extends FragmentGenerator {
         }
     }
 
-    private int getAmount(SerializedMap map) {
+    private int getAmount(Player player, SerializedMap map) {
         int defaultAmount = map.getInteger("Amount_To_Give");
         boolean isDynamic = map.getBoolean("Dynamic_Amount", false);
-        Integer i = GeneratorAddon.getConfig().getFragmentAmount(PlayerFishingListener.getCaughtFish());
+        Integer i = GeneratorAddon.getConfig().getFragmentAmount(PlayerFishingListener.getCaughtFish().get(player));
 
         return isDynamic && i != null ? i : defaultAmount;
     }

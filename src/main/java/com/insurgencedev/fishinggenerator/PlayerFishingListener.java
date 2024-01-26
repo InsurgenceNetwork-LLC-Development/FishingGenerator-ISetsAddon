@@ -2,25 +2,26 @@ package com.insurgencedev.fishinggenerator;
 
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 import org.insurgencedev.insurgencesets.api.FragmentGenerator;
 import org.insurgencedev.insurgencesets.api.ISetsAPI;
-import org.insurgencedev.insurgencesets.libs.fo.Common;
-import org.insurgencedev.insurgencesets.models.armorset.ArmorSet;
-import org.insurgencedev.insurgencesets.settings.ISetsPlayerCache;
+import org.insurgencedev.insurgencesets.api.contracts.IArmorSet;
+import org.insurgencedev.insurgencesets.api.contracts.IPlayer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class PlayerFishingListener implements Listener {
 
     @Getter
-    private static String caughtFish;
+    private static Map<Player, String> caughtFish = new HashMap<>();
 
     @EventHandler
     public void onFish(PlayerFishEvent event) {
@@ -32,8 +33,8 @@ public final class PlayerFishingListener implements Listener {
 
                 if (isFish(item.getType())) {
                     Player player = event.getPlayer();
-                    ISetsPlayerCache cache = ISetsAPI.getCache(player);
-                    ArmorSet armorSet = ISetsAPI.getArmorSetManager().findArmorSet(cache.getArmorSetFragmentGen());
+                    IPlayer cache = ISetsAPI.getCache(player);
+                    IArmorSet armorSet = ISetsAPI.getArmorSetManager().getArmorSet(cache.getFragmentDataManager().getArmorSetFragmentGen());
 
                     if (armorSet != null) {
                         final String type = armorSet.getFragmentGeneration().getString("Type");
@@ -47,7 +48,7 @@ public final class PlayerFishingListener implements Listener {
                         if (type.equals(FishingGenerator.namespace)) {
                             List<String> disabledWorlds = armorSet.getFragmentGeneration().getStringList("Disabled_Worlds");
                             if (!disabledWorlds.contains(player.getWorld().getName())) {
-                                caughtFish = item.getType().name().toLowerCase();
+                                caughtFish.put(player, item.getType().name().toLowerCase());
                                 generator.handleGeneration(player, armorSet.getFragmentGeneration());
                             }
                         }
