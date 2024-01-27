@@ -1,5 +1,6 @@
-package com.insurgencedev.fishinggenerator;
+package com.insurgencedev.fishinggenerator.listeners;
 
+import com.insurgencedev.fishinggenerator.FishingGenerator;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;

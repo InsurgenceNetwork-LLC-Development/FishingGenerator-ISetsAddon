@@ -1,5 +1,6 @@
 package com.insurgencedev.fishinggenerator;
 
+import com.insurgencedev.fishinggenerator.listeners.PlayerFishingListener;
 import lombok.Getter;
 import org.insurgencedev.insurgencesets.api.ISetsAPI;
 import org.insurgencedev.insurgencesets.api.addon.ISetsAddon;
